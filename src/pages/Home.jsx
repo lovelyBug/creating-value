@@ -13,6 +13,7 @@ class Home extends Component {
        isToLogin: false,
        userName: '',
       };
+    //全局提示信息属性配置
     message.config({
       top: 100,
       duration: 1,
