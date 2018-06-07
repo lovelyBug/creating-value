@@ -236,4 +236,12 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
+
+    // creatingValue配置
+    'creatingValue'         => [
+        // 是否同一个账号只能在同一个地方登录
+        'login_unique'      => false,
+        // 是否设置登录失败超过10次需要等待30分钟才能继续登录
+        'login_failure_retry'  => true,
+    ],
 ];
