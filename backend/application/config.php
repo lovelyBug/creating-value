@@ -149,7 +149,7 @@ return [
     // +----------------------------------------------------------------------
 
     // 异常页面的模板文件
-    'exception_tmpl'         => THINK_PATH . 'tpl' . DS . 'think_exception.tpl',
+    'exception_tmpl'         => APP_PATH . 'common' . DS . 'view' . DS . 'tpl' . DS . 'exception.tpl',
 
     // 错误显示信息,非调试模式有效
     'error_message'          => '页面错误！请稍后再试～',
@@ -243,5 +243,20 @@ return [
         'login_unique'      => false,
         // 是否设置登录失败超过10次需要等待30分钟才能继续登录
         'login_failure_retry'  => true,
+    ],
+
+    // Email配置
+    'email'          => [
+        'user' => 'hnwangp@aliyun.com',
+        'password'  => '000012wang',
+    ],
+
+    // http请求异常设置
+    'http_exception_template'   =>   [
+        403 => APP_PATH . 'common' . DS . 'view' . DS . 'error' . DS . 'error403.html',
+        404 => APP_PATH . 'common' . DS . 'view' . DS . 'error' . DS . 'error404.html',
+        406 => APP_PATH . 'common' . DS . 'view' . DS . 'error' . DS . 'error406.html',
+        500 => APP_PATH . 'common' . DS . 'view' . DS . 'error' . DS . 'error500.html',
+        504 => APP_PATH . 'common' . DS . 'view' . DS . 'error' . DS . 'error504.html',
     ],
 ];

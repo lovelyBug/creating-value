@@ -5,7 +5,7 @@
  * Date: 2018/6/7
  * Time: 16:47
  */
-namespace app\common;
+namespace app\common\controller;
 use creatingValue\Auth;
 use think\Controller;
 

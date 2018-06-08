@@ -8,7 +8,10 @@
 namespace creatingValue;
 
 use app\index\model\User;
+use PHPMailer\PHPMailer;
+use PHPMailer\Exception;
 use think\Config;
+use think\Cookie;
 use think\Request;
 use think\Session;
 
@@ -98,7 +101,14 @@ class Auth
         return true;
     }
 
-    public function login($userName, $password, $keepLogin = 0) {
+    /**
+     * 用户登录
+     * @param $userName  string    用户名
+     * @param $password   string    密码
+     * @param int $keepTime  int   有效时长
+     * @return bool|string
+     */
+    public function login($userName, $password, $keepTime = 0) {
         $user = User::get('user_name', $userName);
         if (! $user) {
             return false;
@@ -116,6 +126,125 @@ class Auth
         $user->token = Random::uuid();
         $user->save();
         Session::set('user', $user->toArray());
+        $this->keepLogin($keepTime);
+        return true;
+    }
 
+    /**
+     * 刷新保持登录的cookie
+     * @param int $keepTime  有效时长
+     * @param $user  User   相关用户
+     * @return bool
+     */
+    public function keepLogin($keepTime = 0, $user) {
+        if ($keepTime) {
+            $expireTime = time() + $keepTime;
+            $key = md5(md5($user->id).md5($keepTime).md5($expireTime).$user->token);
+            $data = [$user->id, $keepTime, $expireTime, $key];
+            Cookie::set('keepLogin', implode('|', $data), $keepTime);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 自动登录
+     * @return bool
+     */
+    public function autoLogin() {
+        $keepLogin = Cookie::get('keepLogin');
+        if (! $keepLogin) {
+            return false;
+        }
+        list($id, $keepTime, $expireTime, $key) = explode('|', $keepLogin);
+        if ($id && $keepTime && $expireTime && $key && $expireTime > time()) {
+            $user = User::get($id);
+            if (! $user || ! $user->token) {
+                return false;
+            }
+            // token有变更
+            if ($key != md5(md5($id).md5($keepTime).md5($expireTime).$user->token)) {
+                return false;
+            }
+            Session::set('user', $user->toArray());
+            $this->keepLogin($keepTime, $user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 发送邮件
+     * @param $subject
+     * @param $body
+     * @param $to
+     * @param bool $isHTML
+     * @return bool
+     */
+    public function sendEmail($subject, $body, $to, $isHTML = true) {
+        $mail = new PHPMailer();
+        $mail->isSMTP();
+        $mail->Host = 'smtp.aliyun.com';
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = 465;
+        $mail->SMTPAuth = true;
+        $mail->Username = Config::get('email.user');
+        $mail->Password = Config::get('email.password');
+        $mail->From = Config::get('email.user');
+        $mail->CharSet = 'UTF-8';
+        $mail->isHTML($isHTML);
+        if (is_string($to)) {
+            $mail->addAddress($to);
+        } else {
+            foreach ($to as $item) {
+                $mail->addAddress($item);
+            }
+        }
+        $mail->Subject = $subject;
+        $mail->Body = $body;
+        $status = $mail->send();
+        if ($status) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 用户注册
+     * @param $userEmail
+     * @param $userName
+     * @param $password
+     * @return bool
+     */
+    public function register($userEmail, $userName, $password) {
+        $user = new User();
+        $user->data([
+            'user_email' => $userEmail,
+            'user_name' => $userName,
+            'user_password' => md5($password),
+            'loginTime' => time(),
+            'createTime' => time(),
+            'updateTime' => time(),
+            'token' => Random::uuid(),
+        ]);
+        $user->save();
+        Session::set('user', $user->toArray());
+        return true;
+    }
+
+    /**
+     * 检查邮箱是否已被注册    邮箱已被注册返回true，否则返回false
+     * @param $userEmail
+     * @return bool
+     */
+    public function checkEmailRepeat($userEmail) {
+        $user = User::get('user_email', $userEmail);
+        if ($user) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
