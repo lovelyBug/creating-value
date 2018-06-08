@@ -110,7 +110,12 @@ class Index extends Backend
         }
     }
 
-    public function sendEmail($to) {
+    /**
+     * 发送验证码
+     * @param $to string|array   接收者
+     * @return string
+     */
+    public function sendCode($to) {
         $subject = '创造你的价值';
         $code = Random::getVerificationCode();
         $body = '<h3>您的验证码是：' . $code . '</h3>';
