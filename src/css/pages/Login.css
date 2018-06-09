@@ -1,5 +1,5 @@
 .container {
-    text-align: center;
+    text-align: left;
     background-image: url(../../resource/images/backImage.jpg);
     height: 100%;
     width: 100%;
@@ -24,6 +24,7 @@
     float: left;
   }
   .login-title {
+    text-align: center;
     margin-top: 5%;
     color: azure;
   }
