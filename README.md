@@ -15,6 +15,7 @@
 * [买家须知](#buyer)
 
 <h2 id="run">项目运行步骤</h2>
+
 1. npm install
 2. npm start
 
