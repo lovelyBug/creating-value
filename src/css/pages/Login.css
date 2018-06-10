@@ -1,6 +1,6 @@
 .container {
     text-align: left;
-    background-image: url(../../resource/images/backImage.jpg);
+    /* background-image: url(../../resource/images/backImage.jpg); */
     height: 100%;
     width: 100%;
     background-size: cover;
@@ -8,11 +8,17 @@
     top: 0px;
     bottom: 0px;
   }
+  .register-form {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 5%;
+  }
   .login-form {
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
-    padding-top: 10%;
+    padding-top: 5%;
   }
   .login-form-forgot {
     float: right;
@@ -26,7 +32,7 @@
   .login-title {
     text-align: center;
     margin-top: 5%;
-    color: azure;
+    
   }
   /* 清空输入按钮样式 */
   .anticon-close-circle {
