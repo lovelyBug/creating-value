@@ -1,4 +1,4 @@
-# 创在你的价值
+# 创造你的价值
 [![Travis branch](https://img.shields.io/travis/USER/REPO/BRANCH.svg)](https://github.com/lovelyBug/creating-value)
 [![Travis](https://img.shields.io/badge/THINKPHP-5.0.20-green.svg)](http://www.thinkphp.cn/down.html)
 [![Travis](https://img.shields.io/badge/react-16.4.0-brightgreen.svg)](https://reactjs.org/docs/hello-world.html)
@@ -15,6 +15,7 @@
 * [买家须知](#buyer)
 
 <h2 id="run">项目运行步骤</h2>
+
 1. npm install
 2. npm start
 
