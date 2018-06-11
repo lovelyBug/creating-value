@@ -7,6 +7,7 @@
  */
 namespace app\common\controller;
 use creatingValue\Auth;
+use creatingValue\CvConst;
 use think\Controller;
 
 /**
@@ -29,8 +30,15 @@ class Backend extends Controller
      */
     protected $auth = null;
 
+    /**
+     * 常量类
+     * @var CvConst
+     */
+    protected $cvConst = null;
+
     public function _initialize()
     {
+        $this->cvConst = CvConst::instance();
         $this->auth = Auth::instance();
         // 检测是否需要验证登录
         if (! $this->auth->match($this->noNeedLogin)) {
