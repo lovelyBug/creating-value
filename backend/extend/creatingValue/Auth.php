@@ -35,14 +35,18 @@ class Auth
      */
     protected $request;
 
+    protected $cvConst = null;
+
     /**
      * 类构造函数
      * Auth constructor.
      */
-    public function __construct()
+    protected function __construct()
     {
         // 初始化request
         $this->request = Request::instance();
+        // 初始化cvConst
+        $this->cvConst = CvConst::instance();
     }
 
     /**
@@ -109,24 +113,24 @@ class Auth
      * @return bool|string
      */
     public function login($userName, $password, $keepTime = 0) {
-        $user = User::get('user_name', $userName);
+        $user = User::get(['user_name' => $userName]);
         if (! $user) {
             return false;
         }
         if (Config::get('creatingValue.login_failure_retry') && $user->loginFailure > 10 && time() - $user->updateTime < 1800) {
-            return json_encode(array('code' => 0, 'msg' => 'failure times too more'));
+            return $this->cvConst->MORE_LOGIN_FAILURE;
         }
-        if ($user->password != md5($password.microtime(true))) {
+        if ($user->user_password != md5($password)) {
             $user->loginFailure++;
             $user->save();
-            return json_encode(array('code' => 0, 'msg' => 'password is incorrect'));
+            return $this->cvConst->PASSWORD_FALSE;
         }
         $user->loginFailure = 0;
         $user->loginTime = time();
         $user->token = Random::uuid();
         $user->save();
         Session::set('user', $user->toArray());
-        $this->keepLogin($keepTime);
+        $this->keepLogin($keepTime, $user);
         return true;
     }
 
@@ -240,8 +244,37 @@ class Auth
      * @return bool
      */
     public function checkEmailRepeat($userEmail) {
-        $user = User::get('user_email', $userEmail);
+        $user = User::get(['user_email' => $userEmail]);
         if ($user) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 检查用户名是否已存在   已存在返回true，否则返回false
+     * @param $userName
+     * @return bool
+     */
+    public function checkUserNameRepeat($userName) {
+        $user = User::get(['user_name' => $userName]);
+        if ($user) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 用户通过邮箱验证码登录
+     * @param $userEmail
+     * @return bool
+     */
+    public function checkEmailLogin($userEmail) {
+        $user = User::get(['user_email' => $userEmail]);
+        if ($user) {
+            Session::set('user', $user->toArray());
             return true;
         } else {
             return false;
